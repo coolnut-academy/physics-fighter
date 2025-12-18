@@ -60,6 +60,14 @@
             background: #8B0000; 
             border-radius: 4px;
         }
+        /* Modal Animation */
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        body.modal-active {
+            overflow-x: hidden;
+            overflow-y: visible !important;
+        }
     </style>
 </head>
 <body class="text-gray-800 flex flex-col min-h-screen">
@@ -140,6 +148,58 @@
             &copy; 2024 PHYSICS FIGHTER. All rights reserved.
         </div>
     </footer>
+
+    <!-- User Modal (Hidden by default) -->
+    <div id="user-modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
+        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+        
+        <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+            <div class="modal-content py-4 text-left px-6">
+                <!--Title-->
+                <div class="flex justify-between items-center pb-3">
+                    <p class="text-2xl font-bold text-primary" id="modal-title">จัดการสมาชิก</p>
+                    <div class="modal-close cursor-pointer z-50" onclick="app.closeUserModal()">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+
+                <!--Body-->
+                <form id="user-form" onsubmit="app.saveUser(event)">
+                    <input type="hidden" id="modal-mode"> <!-- create or edit -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Username (ใช้ Login)</label>
+                        <input type="text" id="modal-username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <input type="text" id="modal-password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="เว้นว่างหากไม่ต้องการเปลี่ยน">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">ชื่อ-นามสกุล</label>
+                        <input type="text" id="modal-fullname" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">บทบาท (Role)</label>
+                        <select id="modal-role" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value="user">User (นักเรียน)</option>
+                            <option value="admin">Admin (ผู้ดูแล)</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">วันหมดอายุสมาชิก</label>
+                        <input type="date" id="modal-expiry" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <p class="text-xs text-gray-500 mt-1">เว้นว่างไว้หากยังไม่ได้สมัคร Package</p>
+                    </div>
+
+                    <!--Footer-->
+                    <div class="flex justify-end pt-2">
+                        <button type="button" onclick="app.closeUserModal()" class="px-4 bg-transparent p-3 rounded-lg text-primary hover:bg-gray-100 hover:text-primary mr-2">ยกเลิก</button>
+                        <button type="submit" class="px-4 bg-primary p-3 rounded-lg text-white hover:bg-red-800">บันทึกข้อมูล</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- JavaScript Logic -->
     <script>
@@ -566,11 +626,14 @@
                             <div class="p-6 border-b">
                                 <h2 class="text-xl font-bold text-primary">Admin Control</h2>
                             </div>
-                            <nav class="p-4">
-                                <a href="#" onclick="app.renderAdminTab('payments')" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-50 text-gray-700 font-medium mb-1 bg-red-50 text-primary">
+                            <nav class="p-4 space-y-2">
+                                <a href="#" onclick="app.renderAdminTab('payments')" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-50 text-gray-700 font-medium bg-red-50 text-primary" id="admin-menu-payments">
                                     <i class="fas fa-money-bill-wave w-6"></i> รายการแจ้งโอน
                                 </a>
-                                <a href="#" onclick="app.renderAdminTab('videos')" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-50 text-gray-700 font-medium mb-1">
+                                <a href="#" onclick="app.renderAdminTab('users')" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-50 text-gray-700 font-medium" id="admin-menu-users">
+                                    <i class="fas fa-users w-6"></i> จัดการสมาชิก
+                                </a>
+                                <a href="#" onclick="app.renderAdminTab('videos')" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-50 text-gray-700 font-medium" id="admin-menu-videos">
                                     <i class="fas fa-video w-6"></i> จัดการวีดีโอ
                                 </a>
                             </nav>
@@ -587,6 +650,13 @@
 
             renderAdminTab: function(tabName) {
                 const content = document.getElementById('admin-content');
+                // Update Sidebar Active State
+                document.querySelectorAll('nav a').forEach(el => {
+                    el.classList.remove('bg-red-50', 'text-primary');
+                    el.classList.add('text-gray-700');
+                });
+                document.getElementById(`admin-menu-${tabName}`).classList.add('bg-red-50', 'text-primary');
+                document.getElementById(`admin-menu-${tabName}`).classList.remove('text-gray-700');
                 
                 if (tabName === 'payments') {
                     const pendingPayments = this.data.payments.filter(p => p.status === 'pending');
@@ -651,6 +721,52 @@
                              </table>
                         </div>
                     `;
+                } else if (tabName === 'users') {
+                    content.innerHTML = `
+                         <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">จัดการสมาชิก</h2>
+                            <button onclick="app.openUserModal()" class="bg-primary text-white px-4 py-2 rounded-lg font-bold hover:bg-red-800 shadow transition">
+                                <i class="fas fa-plus mr-2"></i> เพิ่มสมาชิก
+                            </button>
+                         </div>
+
+                         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <table class="w-full text-left text-sm text-gray-600">
+                                <thead class="bg-gray-50 text-gray-800 font-bold">
+                                    <tr>
+                                        <th class="px-6 py-3">ชื่อ-นามสกุล</th>
+                                        <th class="px-6 py-3">Username</th>
+                                        <th class="px-6 py-3">สถานะ</th>
+                                        <th class="px-6 py-3">หมดอายุ</th>
+                                        <th class="px-6 py-3">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y">
+                                    ${this.data.users.map(u => {
+                                        const isActive = u.role === 'admin' ? true : (u.subscriptionExpiry && new Date(u.subscriptionExpiry) > new Date());
+                                        const expiryText = u.role === 'admin' ? 'ถาวร' : (u.subscriptionExpiry ? this.formatDate(u.subscriptionExpiry) : 'ไม่มีแพ็กเกจ');
+                                        const statusBadge = u.role === 'admin' 
+                                            ? '<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-bold">ADMIN</span>' 
+                                            : (isActive 
+                                                ? '<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">ACTIVE</span>' 
+                                                : '<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">EXPIRED</span>');
+                                        
+                                        return `
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 font-medium text-gray-800">${u.name}</td>
+                                            <td class="px-6 py-4">${u.username}</td>
+                                            <td class="px-6 py-4">${statusBadge}</td>
+                                            <td class="px-6 py-4">${expiryText}</td>
+                                            <td class="px-6 py-4">
+                                                <button onclick="app.openUserModal('${u.username}')" class="text-blue-600 hover:text-blue-800 mr-3 font-medium"><i class="fas fa-edit"></i> แก้ไข</button>
+                                                ${u.role !== 'admin' ? `<button onclick="app.deleteUser('${u.username}')" class="text-red-500 hover:text-red-700 font-medium"><i class="fas fa-trash"></i> ลบ</button>` : ''}
+                                            </td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                         </div>
+                    `;
                 } else if (tabName === 'videos') {
                     content.innerHTML = `
                          <h2 class="text-2xl font-bold mb-6 text-gray-800">จัดการวีดีโอคอร์สเรียน</h2>
@@ -707,6 +823,115 @@
                             </div>
                          </div>
                     `;
+                }
+            },
+
+            // --- User Management Functions ---
+            openUserModal: function(username = null) {
+                const modal = document.getElementById('user-modal');
+                const form = document.getElementById('user-form');
+                const title = document.getElementById('modal-title');
+                
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                document.body.classList.add('modal-active');
+                
+                if (username) {
+                    // Edit Mode
+                    const user = this.data.users.find(u => u.username === username);
+                    document.getElementById('modal-mode').value = 'edit';
+                    title.textContent = 'แก้ไขข้อมูลสมาชิก';
+                    document.getElementById('modal-username').value = user.username;
+                    document.getElementById('modal-username').readOnly = true; // Cannot change username
+                    document.getElementById('modal-username').classList.add('bg-gray-100');
+                    document.getElementById('modal-password').value = ''; // Reset password field
+                    document.getElementById('modal-fullname').value = user.name;
+                    document.getElementById('modal-role').value = user.role;
+                    
+                    if (user.subscriptionExpiry) {
+                        const date = new Date(user.subscriptionExpiry);
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        document.getElementById('modal-expiry').value = `${year}-${month}-${day}`;
+                    } else {
+                        document.getElementById('modal-expiry').value = '';
+                    }
+
+                } else {
+                    // Create Mode
+                    document.getElementById('modal-mode').value = 'create';
+                    title.textContent = 'เพิ่มสมาชิกใหม่';
+                    form.reset();
+                    document.getElementById('modal-username').readOnly = false;
+                    document.getElementById('modal-username').classList.remove('bg-gray-100');
+                }
+            },
+
+            closeUserModal: function() {
+                const modal = document.getElementById('user-modal');
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                document.body.classList.remove('modal-active');
+            },
+
+            saveUser: function(event) {
+                event.preventDefault();
+                const mode = document.getElementById('modal-mode').value;
+                const username = document.getElementById('modal-username').value;
+                const password = document.getElementById('modal-password').value;
+                const name = document.getElementById('modal-fullname').value;
+                const role = document.getElementById('modal-role').value;
+                const expiryDate = document.getElementById('modal-expiry').value;
+
+                let expiryTimestamp = null;
+                if (expiryDate) {
+                    const d = new Date(expiryDate);
+                    d.setHours(23, 59, 59); // Set to end of day
+                    expiryTimestamp = d.getTime();
+                }
+
+                if (mode === 'create') {
+                    if (this.data.users.find(u => u.username === username)) {
+                        alert('Username นี้มีอยู่ในระบบแล้ว');
+                        return;
+                    }
+                    if (!password) {
+                        alert('กรุณากำหนดรหัสผ่าน');
+                        return;
+                    }
+
+                    this.data.users.push({
+                        username,
+                        password,
+                        name,
+                        role,
+                        subscriptionExpiry: expiryTimestamp,
+                        progress: {}
+                    });
+                    alert('เพิ่มสมาชิกเรียบร้อย');
+                } else {
+                    // Edit
+                    const index = this.data.users.findIndex(u => u.username === username);
+                    if (index !== -1) {
+                        this.data.users[index].name = name;
+                        this.data.users[index].role = role;
+                        this.data.users[index].subscriptionExpiry = expiryTimestamp;
+                        if (password) {
+                            this.data.users[index].password = password;
+                        }
+                        alert('อัพเดทข้อมูลเรียบร้อย');
+                    }
+                }
+
+                this.saveData();
+                this.closeUserModal();
+                this.renderAdminTab('users');
+            },
+
+            deleteUser: function(username) {
+                if (confirm(`คุณแน่ใจหรือไม่ที่จะลบ User: ${username}?`)) {
+                    this.data.users = this.data.users.filter(u => u.username !== username);
+                    this.saveData();
+                    this.renderAdminTab('users');
                 }
             },
 
