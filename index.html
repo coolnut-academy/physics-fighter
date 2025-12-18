@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHYSICS FIGHTER - ติวฟิสิกส์ ม.ปลาย และ A-Level</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B0000', // Deep Red (Dark Red/Burgundy)
+                        secondary: '#F5F5F5', // Off White/Cream
+                        accent: '#D4AF37', // Gold
+                        dark: '#1A1A1A',
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #FAFAFA;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        .gold-gradient {
+            background: linear-gradient(45deg, #D4AF37, #F2D06B, #D4AF37);
+        }
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8B0000; 
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-primary text-white sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.renderHome()">
+                <img src="https://img5.pic.in.th/file/secure-sv1/Physics-Fighter-.png" alt="Logo" class="h-10 w-auto bg-white rounded-full p-1">
+                <span class="text-xl font-bold tracking-wider">PHYSICS FIGHTER</span>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#" onclick="app.renderHome()" class="hover:text-accent transition">หน้าแรก</a>
+                <a href="#" onclick="app.scrollToCourses()" class="hover:text-accent transition">คอร์สเรียน</a>
+                
+                <!-- Guest View -->
+                <div id="nav-guest" class="flex items-center space-x-4">
+                    <button onclick="app.showLogin()" class="hover:text-accent transition">เข้าสู่ระบบ</button>
+                    <button onclick="app.showRegister()" class="bg-white text-primary px-4 py-2 rounded-full font-bold hover:bg-accent hover:text-white transition shadow-md">สมัครสมาชิก</button>
+                </div>
+
+                <!-- User View -->
+                <div id="nav-user" class="hidden flex items-center space-x-4">
+                    <span id="user-display-name" class="font-medium">User</span>
+                    <button onclick="app.renderPayment()" class="text-sm bg-accent text-white px-3 py-1 rounded-full hover:bg-yellow-600 transition">
+                        <i class="fas fa-crown mr-1"></i> ต่ออายุ
+                    </button>
+                    <button onclick="app.logout()" class="text-gray-300 hover:text-white"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+
+                <!-- Admin View -->
+                <div id="nav-admin" class="hidden flex items-center space-x-4">
+                    <span class="text-accent font-bold"><i class="fas fa-user-shield mr-1"></i> Admin</span>
+                    <button onclick="app.renderAdmin()" class="hover:text-white">จัดการระบบ</button>
+                    <button onclick="app.logout()" class="text-gray-300 hover:text-white"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white text-2xl" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="app-container" class="flex-grow">
+        <!-- Dynamic Content will be loaded here -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-8 mt-auto">
+        <div class="container mx-auto px-4 grid md:grid-cols-3 gap-8">
+            <div>
+                <div class="flex items-center space-x-2 mb-4">
+                    <img src="https://img5.pic.in.th/file/secure-sv1/Physics-Fighter-.png" class="h-8 bg-white rounded-full p-0.5">
+                    <h3 class="text-xl font-bold">PHYSICS FIGHTER</h3>
+                </div>
+                <p class="text-gray-400 text-sm">สถาบันกวดวิชาฟิสิกส์อันดับ 1 เน้นความเข้าใจ ไม่เน้นท่องจำ พร้อมพาคุณพิชิตทุกสนามสอบ</p>
+            </div>
+            <div>
+                <h4 class="text-lg font-bold mb-4 text-accent">ติดต่อเรา</h4>
+                <ul class="space-y-2 text-gray-400 text-sm">
+                    <li><i class="fab fa-line mr-2 text-green-500"></i> Line: @physicsfighter</li>
+                    <li><i class="fab fa-facebook mr-2 text-blue-500"></i> Physics Fighter Official</li>
+                    <li><i class="fas fa-phone mr-2 text-white"></i> 089-999-9999</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-lg font-bold mb-4 text-accent">คอร์สยอดนิยม</h4>
+                <ul class="space-y-2 text-gray-400 text-sm">
+                    <li>A-Level Physics Pack</li>
+                    <li>TPAT3 Engineering</li>
+                    <li>Foundation Physics</li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center mt-8 pt-4 border-t border-gray-800 text-xs text-gray-500">
+            &copy; 2024 PHYSICS FIGHTER. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Mock Data & State Management ---
+        const DEFAULT_COURSES = [
+            { id: 1, title: 'สรุปสูตรฟิสิกส์ ม.4-6 (Foundation)', category: 'review', description: 'ปูพื้นฐานแน่น ทบทวนก่อนสอบ', image: 'https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?auto=format&fit=crop&q=80&w=1000', videos: [] },
+            { id: 2, title: 'ตะลุยโจทย์ A-Level ฟิสิกส์', category: 'alevel', description: 'เจาะลึกข้อสอบจริง อัพคะแนน 70+', image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=1000', videos: [] },
+            { id: 3, title: 'TPAT3 ความถนัดวิศวะ', category: 'tpat3', description: 'ฟิสิกส์วิศวะ กลศาสตร์และไฟฟ้า', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1000', videos: [] },
+        ];
+
+        const PACKAGES = [
+            { id: '3m', name: 'Fighter Starter', duration: 3, price: 1500, unit: 'เดือน' },
+            { id: '6m', name: 'Fighter Pro', duration: 6, price: 2800, unit: 'เดือน' },
+            { id: '1y', name: 'Ultimate Fighter', duration: 12, price: 4500, unit: 'ปี' },
+        ];
+
+        // --- Application Object ---
+        const app = {
+            data: {
+                users: JSON.parse(localStorage.getItem('pf_users')) || [{ username: 'admin', password: '1234', role: 'admin', name: 'Admin Master' }],
+                currentUser: JSON.parse(localStorage.getItem('pf_currentUser')) || null,
+                courses: JSON.parse(localStorage.getItem('pf_courses')) || DEFAULT_COURSES,
+                payments: JSON.parse(localStorage.getItem('pf_payments')) || [],
+            },
+
+            // --- Initialization ---
+            init: function() {
+                this.updateNavbar();
+                this.renderHome();
+                // Check if admin setup videos needed (Mock videos for demo)
+                if (this.data.courses[0].videos.length === 0) {
+                    this.mockVideos();
+                }
+            },
+
+            saveData: function() {
+                localStorage.setItem('pf_users', JSON.stringify(this.data.users));
+                localStorage.setItem('pf_courses', JSON.stringify(this.data.courses));
+                localStorage.setItem('pf_payments', JSON.stringify(this.data.payments));
+                if (this.data.currentUser) localStorage.setItem('pf_currentUser', JSON.stringify(this.data.currentUser));
+            },
+
+            mockVideos: function() {
+                // Add some dummy videos
+                this.data.courses.forEach(c => {
+                    c.videos.push(
+                        { id: Date.now() + Math.random(), title: 'EP.1 บทนำและการเคลื่อนที่ (ดูฟรี)', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', isFree: true }, // Rick roll as placeholder
+                        { id: Date.now() + Math.random(), title: 'EP.2 กฎของนิวตัน', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', isFree: false },
+                        { id: Date.now() + Math.random(), title: 'EP.3 งานและพลังงาน', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', isFree: false }
+                    );
+                });
+                this.saveData();
+            },
+
+            // --- Authentication ---
+            login: function(username, password) {
+                const user = this.data.users.find(u => u.username === username && u.password === password);
+                if (user) {
+                    this.data.currentUser = user;
+                    localStorage.setItem('pf_currentUser', JSON.stringify(user));
+                    this.updateNavbar();
+                    if (user.role === 'admin') this.renderAdmin();
+                    else this.renderHome();
+                    return true;
+                }
+                alert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+                return false;
+            },
+
+            logout: function() {
+                this.data.currentUser = null;
+                localStorage.removeItem('pf_currentUser');
+                this.updateNavbar();
+                this.renderHome();
+            },
+
+            register: function(username, password, name) {
+                if (this.data.users.find(u => u.username === username)) {
+                    alert('ชื่อผู้ใช้นี้ถูกใช้งานแล้ว');
+                    return false;
+                }
+                const newUser = { 
+                    username, 
+                    password, 
+                    name, 
+                    role: 'user', 
+                    subscriptionExpiry: null, // timestamp
+                    progress: {} // { courseId: [videoId, videoId] }
+                };
+                this.data.users.push(newUser);
+                this.saveData();
+                alert('สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
+                this.showLogin();
+                return true;
+            },
+
+            // --- Helper Functions ---
+            isUserActive: function() {
+                if (!this.data.currentUser) return false;
+                if (this.data.currentUser.role === 'admin') return true;
+                if (!this.data.currentUser.subscriptionExpiry) return false;
+                return new Date(this.data.currentUser.subscriptionExpiry) > new Date();
+            },
+
+            updateNavbar: function() {
+                const guestNav = document.getElementById('nav-guest');
+                const userNav = document.getElementById('nav-user');
+                const adminNav = document.getElementById('nav-admin');
+                
+                guestNav.classList.add('hidden');
+                userNav.classList.add('hidden');
+                adminNav.classList.add('hidden');
+
+                if (!this.data.currentUser) {
+                    guestNav.classList.remove('hidden');
+                } else if (this.data.currentUser.role === 'admin') {
+                    adminNav.classList.remove('hidden');
+                } else {
+                    userNav.classList.remove('hidden');
+                    document.getElementById('user-display-name').textContent = this.data.currentUser.name;
+                }
+            },
+
+            formatDate: function(dateString) {
+                if (!dateString) return '-';
+                const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' };
+                return new Date(dateString).toLocaleDateString('th-TH', options);
+            },
+
+            // --- Rendering Pages ---
+            
+            // 1. Home Page
+            renderHome: function() {
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <!-- Hero Section -->
+                    <div class="relative bg-primary overflow-hidden">
+                        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1517673132405-a56a62b18caf?q=80&w=2000')] bg-cover bg-center opacity-20"></div>
+                        <div class="container mx-auto px-4 py-20 relative z-10 text-center text-white">
+                            <h1 class="text-4xl md:text-6xl font-bold mb-4 text-shadow">PHYSICS FIGHTER</h1>
+                            <p class="text-xl md:text-2xl mb-8 font-light text-gray-200">"Fight for Physics, Fight for Your Future"</p>
+                            <button onclick="app.scrollToCourses()" class="bg-accent text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-yellow-600 transition shadow-lg transform hover:scale-105">
+                                เริ่มต้นเรียนรู้เลย <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Courses Section -->
+                    <div id="courses-section" class="container mx-auto px-4 py-16">
+                        <div class="text-center mb-12">
+                            <h2 class="text-3xl font-bold text-primary mb-2">คอร์สเรียนของเรา</h2>
+                            <div class="h-1 w-20 bg-accent mx-auto"></div>
+                        </div>
+
+                        <!-- Categories -->
+                        <div class="grid md:grid-cols-3 gap-8">
+                            ${this.generateCourseCards('review')}
+                            ${this.generateCourseCards('alevel')}
+                            ${this.generateCourseCards('tpat3')}
+                        </div>
+                    </div>
+                `;
+            },
+
+            generateCourseCards: function(category) {
+                const courses = this.data.courses.filter(c => c.category === category);
+                return courses.map(course => `
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 border border-gray-100 group">
+                        <div class="h-48 overflow-hidden relative">
+                            <img src="${course.image}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
+                            <div class="absolute top-4 right-4 bg-accent text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                                ${category.toUpperCase()}
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">${course.title}</h3>
+                            <p class="text-gray-500 text-sm mb-4 line-clamp-2">${course.description}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-400"><i class="fas fa-video mr-1"></i> ${course.videos.length} บทเรียน</span>
+                                <button onclick="app.renderCourseDetail(${course.id})" class="text-primary font-bold hover:text-red-700 transition">
+                                    ดูรายละเอียด <i class="fas fa-chevron-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            // 2. Course Detail Page
+            renderCourseDetail: function(courseId) {
+                const course = this.data.courses.find(c => c.id === courseId);
+                const isActive = this.isUserActive();
+                const container = document.getElementById('app-container');
+                
+                // Calculate Progress
+                let watchedCount = 0;
+                if (this.data.currentUser && this.data.currentUser.progress && this.data.currentUser.progress[courseId]) {
+                    watchedCount = this.data.currentUser.progress[courseId].length;
+                }
+                const progressPercent = course.videos.length > 0 ? Math.round((watchedCount / course.videos.length) * 100) : 0;
+
+                let videoListHtml = course.videos.map((video, index) => {
+                    const isLocked = !video.isFree && !isActive;
+                    const isWatched = this.data.currentUser && this.data.currentUser.progress && this.data.currentUser.progress[courseId]?.includes(video.id);
+                    
+                    return `
+                    <div onclick="${isLocked ? 'app.showLockedMessage()' : `app.playVideo(${courseId}, ${video.id})`}" 
+                         class="flex items-center p-4 border-b hover:bg-gray-50 cursor-pointer ${isLocked ? 'opacity-75 bg-gray-100' : ''}">
+                        <div class="mr-4 text-gray-400 font-bold w-6 text-center">${index + 1}</div>
+                        <div class="flex-grow">
+                            <h4 class="font-medium ${isLocked ? 'text-gray-500' : 'text-gray-800'}">
+                                ${video.title} ${isWatched ? '<i class="fas fa-check-circle text-green-500 ml-2" title="ดูจบแล้ว"></i>' : ''}
+                            </h4>
+                        </div>
+                        <div class="ml-4">
+                            ${isLocked 
+                                ? '<span class="text-gray-400"><i class="fas fa-lock"></i></span>' 
+                                : '<span class="text-primary"><i class="fas fa-play-circle text-xl"></i></span>'}
+                        </div>
+                    </div>`;
+                }).join('');
+
+                container.innerHTML = `
+                    <div class="container mx-auto px-4 py-8">
+                        <button onclick="app.renderHome()" class="mb-4 text-gray-500 hover:text-primary"><i class="fas fa-arrow-left"></i> กลับหน้าหลัก</button>
+                        
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <!-- Video Player Section -->
+                            <div class="md:col-span-2">
+                                <div id="video-player-container" class="bg-black rounded-xl overflow-hidden shadow-2xl aspect-video relative flex items-center justify-center text-white">
+                                    <div class="text-center p-8">
+                                        <i class="fas fa-play-circle text-6xl mb-4 opacity-50"></i>
+                                        <p>เลือกบทเรียนทางด้านขวาเพื่อเริ่มเรียน</p>
+                                    </div>
+                                </div>
+                                <div class="mt-6 glass-panel p-6 rounded-xl">
+                                    <h1 class="text-2xl font-bold text-primary mb-2">${course.title}</h1>
+                                    <p class="text-gray-600 mb-4">${course.description}</p>
+                                    
+                                    ${isActive 
+                                        ? `<div class="bg-green-100 text-green-800 px-4 py-2 rounded-lg inline-block text-sm"><i class="fas fa-check-circle mr-1"></i> สถานะสมาชิก: Active</div>`
+                                        : `<div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg inline-block text-sm mb-2"><i class="fas fa-exclamation-circle mr-1"></i> ดูได้เฉพาะคลิปฟรี</div>
+                                           <button onclick="app.renderPayment()" class="ml-2 text-sm bg-primary text-white px-3 py-2 rounded hover:bg-red-800">สมัครสมาชิกเพื่อดูทั้งหมด</button>`
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Playlist & Progress -->
+                            <div class="bg-white rounded-xl shadow-lg border border-gray-100 h-fit">
+                                <div class="p-4 bg-primary text-white rounded-t-xl">
+                                    <h3 class="font-bold text-lg">เนื้อหาบทเรียน</h3>
+                                    ${this.data.currentUser ? `
+                                    <div class="mt-2 text-sm text-gray-200">
+                                        <div class="flex justify-between mb-1">
+                                            <span>ความคืบหน้า</span>
+                                            <span>${progressPercent}%</span>
+                                        </div>
+                                        <div class="w-full bg-red-800 rounded-full h-2">
+                                            <div class="bg-accent h-2 rounded-full" style="width: ${progressPercent}%"></div>
+                                        </div>
+                                    </div>` : ''}
+                                </div>
+                                <div class="max-h-[600px] overflow-y-auto">
+                                    ${videoListHtml}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            playVideo: function(courseId, videoId) {
+                const course = this.data.courses.find(c => c.id === courseId);
+                const video = course.videos.find(v => v.id === videoId);
+                const playerContainer = document.getElementById('video-player-container');
+                
+                playerContainer.innerHTML = `
+                    <iframe width="100%" height="100%" src="${video.url}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                `;
+
+                // Update Progress Logic
+                if (this.data.currentUser && this.data.currentUser.role !== 'admin') {
+                    if (!this.data.currentUser.progress) this.data.currentUser.progress = {};
+                    if (!this.data.currentUser.progress[courseId]) this.data.currentUser.progress[courseId] = [];
+                    
+                    if (!this.data.currentUser.progress[courseId].includes(videoId)) {
+                        this.data.currentUser.progress[courseId].push(videoId);
+                        
+                        // Update in User array too
+                        const userIdx = this.data.users.findIndex(u => u.username === this.data.currentUser.username);
+                        if(userIdx !== -1) {
+                            this.data.users[userIdx] = this.data.currentUser;
+                            this.saveData();
+                        }
+                    }
+                }
+            },
+
+            showLockedMessage: function() {
+                if(!this.data.currentUser) {
+                    if(confirm("เนื้อหานี้สำหรับสมาชิก กรุณาเข้าสู่ระบบ")) {
+                        this.showLogin();
+                    }
+                } else {
+                    if(confirm("เนื้อหานี้ต้องใช้แพ็กเกจสมาชิก ต้องการสมัครสมาชิกเลยหรือไม่?")) {
+                        this.renderPayment();
+                    }
+                }
+            },
+
+            // 3. Payment Page
+            renderPayment: function() {
+                if (!this.data.currentUser) { this.showLogin(); return; }
+                const container = document.getElementById('app-container');
+                
+                const packagesHtml = PACKAGES.map(pkg => `
+                    <div class="bg-white rounded-2xl shadow-lg border-2 hover:border-accent p-6 flex flex-col items-center cursor-pointer transition transform hover:-translate-y-2 relative overflow-hidden" onclick="app.selectPackage('${pkg.id}', ${pkg.price})">
+                        ${pkg.id === '1y' ? '<div class="absolute top-0 right-0 bg-accent text-white text-xs font-bold px-3 py-1 rounded-bl-lg">คุ้มที่สุด</div>' : ''}
+                        <h3 class="text-xl font-bold text-gray-800 mt-2">${pkg.name}</h3>
+                        <div class="text-primary text-4xl font-bold my-4">฿${pkg.price.toLocaleString()}</div>
+                        <p class="text-gray-500 mb-6">ระยะเวลา ${pkg.duration} ${pkg.unit}</p>
+                        <button class="bg-gray-100 text-gray-800 px-6 py-2 rounded-full font-bold hover:bg-accent hover:text-white transition w-full">เลือกแพ็กเกจนี้</button>
+                    </div>
+                `).join('');
+
+                container.innerHTML = `
+                    <div class="container mx-auto px-4 py-12">
+                        <div class="text-center max-w-3xl mx-auto mb-12">
+                            <h2 class="text-3xl font-bold text-primary mb-4">สมัครสมาชิก Physics Fighter</h2>
+                            <p class="text-gray-600">เข้าถึงคอร์สเรียนทั้งหมดกว่า 500+ ชั่วโมง ครอบคลุมเนื้อหา ม.ปลาย - สอบเข้ามหาวิทยาลัย</p>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16">
+                            ${packagesHtml}
+                        </div>
+
+                        <!-- Payment Form Section (Initially Hidden) -->
+                        <div id="payment-form-section" class="hidden max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center border-b pb-4">แจ้งชำระเงิน</h3>
+                            
+                            <!-- Mock QR Code -->
+                            <div class="flex flex-col items-center mb-8 bg-gray-50 p-6 rounded-xl border border-gray-200">
+                                <p class="text-gray-500 mb-2 text-sm">สแกน QR Code เพื่อชำระเงิน</p>
+                                <div class="w-48 h-48 bg-white p-2 shadow-sm mb-2">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PhysicsFighterPayment" alt="QR Code" class="w-full h-full">
+                                </div>
+                                <p class="font-bold text-xl text-primary" id="payment-amount-display">฿0.00</p>
+                                <p class="text-gray-400 text-xs mt-2">ธนาคารกสิกรไทย: 123-4-56789-0</p>
+                            </div>
+
+                            <form onsubmit="app.submitPayment(event)">
+                                <input type="hidden" id="selected-package-id">
+                                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-bold mb-2">วันที่โอน</label>
+                                        <input type="date" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-bold mb-2">เวลาโอน</label>
+                                        <input type="time" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary">
+                                    </div>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">แนบสลิปการโอนเงิน</label>
+                                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary cursor-pointer transition">
+                                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                        <p class="text-gray-500 text-sm">คลิกเพื่ออัพโหลดรูปภาพสลิป</p>
+                                        <input type="file" required accept="image/*" class="hidden" id="slip-upload" onchange="document.querySelector('.fa-cloud-upload-alt').classList.replace('text-gray-400', 'text-green-500')">
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-red-800 transition shadow-lg">ยืนยันการแจ้งโอนเงิน</button>
+                            </form>
+                            <div class="mt-4 text-center">
+                                <a href="https://line.me/ti/p/~admin" target="_blank" class="text-green-600 hover:underline text-sm"><i class="fab fa-line mr-1"></i> ติดต่อ Admin ด่วนทาง Line</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            selectPackage: function(pkgId, price) {
+                document.getElementById('payment-form-section').classList.remove('hidden');
+                document.getElementById('payment-form-section').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('selected-package-id').value = pkgId;
+                document.getElementById('payment-amount-display').textContent = `฿${price.toLocaleString()}`;
+            },
+
+            submitPayment: function(event) {
+                event.preventDefault();
+                const pkgId = document.getElementById('selected-package-id').value;
+                const pkg = PACKAGES.find(p => p.id === pkgId);
+                
+                const newPayment = {
+                    id: Date.now(),
+                    userId: this.data.currentUser.username,
+                    userName: this.data.currentUser.name,
+                    packageId: pkgId,
+                    packageName: pkg.name,
+                    amount: pkg.price,
+                    date: new Date().toISOString(),
+                    status: 'pending', // pending, approved, rejected
+                    slipUrl: 'mock_slip.jpg' // In real app, upload to storage
+                };
+
+                this.data.payments.push(newPayment);
+                this.saveData();
+                
+                alert('แจ้งชำระเงินเรียบร้อย! กรุณารอ Admin อนุมัติ');
+                this.renderHome();
+            },
+
+            // 4. Admin Dashboard
+            renderAdmin: function() {
+                if (!this.data.currentUser || this.data.currentUser.role !== 'admin') {
+                    this.renderHome();
+                    return;
+                }
+
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="flex h-screen bg-gray-100">
+                        <!-- Sidebar -->
+                        <div class="w-64 bg-white shadow-lg hidden md:block">
+                            <div class="p-6 border-b">
+                                <h2 class="text-xl font-bold text-primary">Admin Control</h2>
+                            </div>
+                            <nav class="p-4">
+                                <a href="#" onclick="app.renderAdminTab('payments')" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-50 text-gray-700 font-medium mb-1 bg-red-50 text-primary">
+                                    <i class="fas fa-money-bill-wave w-6"></i> รายการแจ้งโอน
+                                </a>
+                                <a href="#" onclick="app.renderAdminTab('videos')" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-50 text-gray-700 font-medium mb-1">
+                                    <i class="fas fa-video w-6"></i> จัดการวีดีโอ
+                                </a>
+                            </nav>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="flex-1 overflow-y-auto p-8" id="admin-content">
+                            <!-- Default to Payments -->
+                        </div>
+                    </div>
+                `;
+                this.renderAdminTab('payments');
+            },
+
+            renderAdminTab: function(tabName) {
+                const content = document.getElementById('admin-content');
+                
+                if (tabName === 'payments') {
+                    const pendingPayments = this.data.payments.filter(p => p.status === 'pending');
+                    const historyPayments = this.data.payments.filter(p => p.status !== 'pending');
+
+                    content.innerHTML = `
+                        <h2 class="text-2xl font-bold mb-6 text-gray-800">ตรวจสอบการชำระเงิน</h2>
+                        
+                        <!-- Pending Table -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
+                            <div class="px-6 py-4 border-b border-gray-100 bg-yellow-50">
+                                <h3 class="font-bold text-yellow-800">รอการอนุมัติ (${pendingPayments.length})</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-50 text-gray-800 font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">User</th>
+                                            <th class="px-6 py-3">แพ็กเกจ</th>
+                                            <th class="px-6 py-3">ยอดเงิน</th>
+                                            <th class="px-6 py-3">เวลาแจ้ง</th>
+                                            <th class="px-6 py-3">สลิป</th>
+                                            <th class="px-6 py-3">จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${pendingPayments.length === 0 ? '<tr><td colspan="6" class="px-6 py-4 text-center">ไม่มีรายการรออนุมัติ</td></tr>' : 
+                                        pendingPayments.map(p => `
+                                            <tr class="border-b hover:bg-gray-50">
+                                                <td class="px-6 py-4 font-medium">${p.userName}<br><span class="text-xs text-gray-400">${p.userId}</span></td>
+                                                <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 py-1 px-2 rounded-full text-xs">${p.packageName}</span></td>
+                                                <td class="px-6 py-4 font-bold text-primary">฿${p.amount.toLocaleString()}</td>
+                                                <td class="px-6 py-4">${this.formatDate(p.date)}</td>
+                                                <td class="px-6 py-4"><button onclick="window.open('https://via.placeholder.com/300x500?text=Slip+Image', '_blank')" class="text-blue-500 underline">ดูสลิป</button></td>
+                                                <td class="px-6 py-4">
+                                                    <button onclick="app.approvePayment(${p.id}, true)" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mr-2 shadow-sm">อนุมัติ</button>
+                                                    <button onclick="app.approvePayment(${p.id}, false)" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 shadow-sm">ปฏิเสธ</button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- History Table -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden opacity-75">
+                             <div class="px-6 py-4 border-b border-gray-100">
+                                <h3 class="font-bold text-gray-800">ประวัติการตรวจสอบ</h3>
+                            </div>
+                             <table class="w-full text-left text-sm text-gray-600">
+                                <tbody class="divide-y">
+                                    ${historyPayments.map(p => `
+                                        <tr>
+                                            <td class="px-6 py-3">${p.userName}</td>
+                                            <td class="px-6 py-3">${p.packageName}</td>
+                                            <td class="px-6 py-3">฿${p.amount.toLocaleString()}</td>
+                                            <td class="px-6 py-3"><span class="${p.status === 'approved' ? 'text-green-600' : 'text-red-600'} font-bold uppercase">${p.status}</span></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                             </table>
+                        </div>
+                    `;
+                } else if (tabName === 'videos') {
+                    content.innerHTML = `
+                         <h2 class="text-2xl font-bold mb-6 text-gray-800">จัดการวีดีโอคอร์สเรียน</h2>
+                         <div class="bg-white p-6 rounded-xl shadow-sm mb-6 border border-gray-200">
+                            <h3 class="font-bold mb-4">เพิ่มวีดีโอใหม่</h3>
+                            <form onsubmit="app.addVideo(event)" class="grid md:grid-cols-2 gap-4">
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-bold mb-1">เลือกคอร์ส</label>
+                                    <select id="admin-course-select" class="w-full border p-2 rounded bg-gray-50">
+                                        ${this.data.courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold mb-1">ชื่อตอน</label>
+                                    <input type="text" id="admin-video-title" required class="w-full border p-2 rounded" placeholder="เช่น EP.1 กฎของนิวตัน">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold mb-1">Youtube Embed URL (Unlisted)</label>
+                                    <input type="text" id="admin-video-url" required class="w-full border p-2 rounded" placeholder="https://www.youtube.com/embed/...">
+                                </div>
+                                <div class="flex items-center mt-6">
+                                    <input type="checkbox" id="admin-video-free" class="mr-2 h-5 w-5">
+                                    <label for="admin-video-free">ดูฟรี (คลิปตัวอย่าง)</label>
+                                </div>
+                                <button type="submit" class="bg-primary text-white py-2 px-4 rounded font-bold hover:bg-red-800 h-10 mt-6">บันทึกวีดีโอ</button>
+                            </form>
+                         </div>
+
+                         <!-- List Videos -->
+                         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                            <h3 class="font-bold mb-4">รายการวีดีโอทั้งหมด</h3>
+                            <div class="space-y-4">
+                                ${this.data.courses.map(c => `
+                                    <div class="border rounded-lg overflow-hidden">
+                                        <div class="bg-gray-100 px-4 py-2 font-bold flex justify-between">
+                                            <span>${c.title}</span>
+                                            <span class="text-xs bg-gray-200 px-2 py-1 rounded">${c.videos.length} คลิป</span>
+                                        </div>
+                                        <div class="divide-y">
+                                            ${c.videos.length === 0 ? '<div class="p-4 text-gray-400 text-sm">ยังไม่มีวีดีโอ</div>' : 
+                                            c.videos.map((v, idx) => `
+                                                <div class="p-3 flex justify-between items-center hover:bg-gray-50">
+                                                    <div class="flex items-center">
+                                                        <span class="w-8 text-gray-400 text-sm">${idx+1}</span>
+                                                        <span class="${v.isFree ? 'text-green-600 font-medium' : 'text-gray-700'}">${v.title}</span>
+                                                        ${v.isFree ? '<span class="ml-2 text-xs bg-green-100 text-green-800 px-1 rounded">FREE</span>' : ''}
+                                                    </div>
+                                                    <button onclick="app.deleteVideo(${c.id}, ${v.id})" class="text-red-500 hover:text-red-700 text-sm">ลบ</button>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                         </div>
+                    `;
+                }
+            },
+
+            approvePayment: function(paymentId, isApproved) {
+                const paymentIdx = this.data.payments.findIndex(p => p.id === paymentId);
+                const payment = this.data.payments[paymentIdx];
+                
+                payment.status = isApproved ? 'approved' : 'rejected';
+                
+                if (isApproved) {
+                    const userIdx = this.data.users.findIndex(u => u.username === payment.userId);
+                    if (userIdx !== -1) {
+                        const pkg = PACKAGES.find(p => p.id === payment.packageId);
+                        const user = this.data.users[userIdx];
+                        
+                        // Calculate expiry
+                        const currentExpiry = user.subscriptionExpiry ? new Date(user.subscriptionExpiry) : new Date();
+                        // If expired, start from now. If active, add to current.
+                        const startDate = currentExpiry > new Date() ? currentExpiry : new Date();
+                        
+                        startDate.setMonth(startDate.getMonth() + pkg.duration);
+                        user.subscriptionExpiry = startDate.getTime();
+                    }
+                }
+                
+                this.saveData();
+                this.renderAdminTab('payments');
+            },
+
+            addVideo: function(event) {
+                event.preventDefault();
+                const courseId = parseInt(document.getElementById('admin-course-select').value);
+                const title = document.getElementById('admin-video-title').value;
+                const url = document.getElementById('admin-video-url').value;
+                const isFree = document.getElementById('admin-video-free').checked;
+
+                const course = this.data.courses.find(c => c.id === courseId);
+                course.videos.push({
+                    id: Date.now(),
+                    title,
+                    url,
+                    isFree
+                });
+                
+                this.saveData();
+                alert('เพิ่มวีดีโอเรียบร้อย');
+                this.renderAdminTab('videos');
+            },
+
+            deleteVideo: function(courseId, videoId) {
+                if(!confirm('ยืนยันที่จะลบวีดีโอนี้?')) return;
+                const course = this.data.courses.find(c => c.id === courseId);
+                course.videos = course.videos.filter(v => v.id !== videoId);
+                this.saveData();
+                this.renderAdminTab('videos');
+            },
+
+            // --- Authentication UI ---
+            showLogin: function() {
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="min-h-[80vh] flex items-center justify-center bg-secondary">
+                        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+                            <div class="text-center mb-8">
+                                <h2 class="text-3xl font-bold text-primary">เข้าสู่ระบบ</h2>
+                                <p class="text-gray-500 mt-2">ยินดีต้อนรับสู่ Physics Fighter</p>
+                            </div>
+                            <form onsubmit="event.preventDefault(); app.login(this.username.value, this.password.value)">
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+                                    <input type="text" name="username" class="w-full px-4 py-3 rounded-lg bg-gray-50 border focus:border-primary focus:outline-none transition" required>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                                    <input type="password" name="password" class="w-full px-4 py-3 rounded-lg bg-gray-50 border focus:border-primary focus:outline-none transition" required>
+                                </div>
+                                <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-red-800 transition shadow-lg mb-4">เข้าสู่ระบบ</button>
+                            </form>
+                            <div class="text-center text-sm">
+                                <span class="text-gray-500">ยังไม่มีบัญชี?</span>
+                                <a href="#" onclick="app.showRegister()" class="text-accent font-bold hover:underline">สมัครสมาชิก</a>
+                            </div>
+                            <div class="mt-4 text-center text-xs text-gray-400 border-t pt-2">
+                                For Test: User=admin, Pass=1234
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            showRegister: function() {
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="min-h-[80vh] flex items-center justify-center bg-secondary">
+                        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+                            <div class="text-center mb-8">
+                                <h2 class="text-3xl font-bold text-primary">สมัครสมาชิก</h2>
+                                <p class="text-gray-500 mt-2">เริ่มต้นเรียนฟิสิกส์ให้เข้าใจวันนี้</p>
+                            </div>
+                            <form onsubmit="event.preventDefault(); app.register(this.username.value, this.password.value, this.fullname.value)">
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">ชื่อ-นามสกุล (สำหรับแสดงผล)</label>
+                                    <input type="text" name="fullname" class="w-full px-4 py-3 rounded-lg bg-gray-50 border focus:border-primary focus:outline-none transition" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+                                    <input type="text" name="username" class="w-full px-4 py-3 rounded-lg bg-gray-50 border focus:border-primary focus:outline-none transition" required>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                                    <input type="password" name="password" class="w-full px-4 py-3 rounded-lg bg-gray-50 border focus:border-primary focus:outline-none transition" required>
+                                </div>
+                                <button type="submit" class="w-full bg-accent text-white font-bold py-3 rounded-lg hover:bg-yellow-600 transition shadow-lg mb-4">สมัครสมาชิก</button>
+                            </form>
+                            <div class="text-center text-sm">
+                                <span class="text-gray-500">มีบัญชีแล้ว?</span>
+                                <a href="#" onclick="app.showLogin()" class="text-primary font-bold hover:underline">เข้าสู่ระบบ</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            scrollToCourses: function() {
+                if (document.getElementById('courses-section')) {
+                    document.getElementById('courses-section').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    this.renderHome();
+                    setTimeout(() => document.getElementById('courses-section').scrollIntoView({ behavior: 'smooth' }), 100);
+                }
+            }
+        };
+
+        // Initialize App
+        function toggleMobileMenu() {
+            // Simple mobile menu toggle logic could be added here
+            alert("Mobile Menu clicked (Implemented purely for responsive layout check)");
+        }
+
+        window.onload = function() {
+            app.init();
+        };
+
+    </script>
+</body>
+</html>
