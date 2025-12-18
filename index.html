@@ -74,41 +74,79 @@
 
     <!-- Navbar -->
     <nav class="bg-primary text-white sticky top-0 z-50 shadow-lg">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.renderHome()">
-                <img src="https://img5.pic.in.th/file/secure-sv1/Physics-Fighter-.png" alt="Logo" class="h-10 w-auto bg-white rounded-full p-1">
-                <span class="text-xl font-bold tracking-wider">PHYSICS FIGHTER</span>
-            </div>
-            
-            <div class="hidden md:flex items-center space-x-6">
-                <a href="#" onclick="app.renderHome()" class="hover:text-accent transition">หน้าแรก</a>
-                <a href="#" onclick="app.scrollToCourses()" class="hover:text-accent transition">คอร์สเรียน</a>
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="app.renderHome()">
+                    <img src="https://img5.pic.in.th/file/secure-sv1/Physics-Fighter-.png" alt="Logo" class="h-10 w-auto bg-white rounded-full p-1">
+                    <span class="text-xl font-bold tracking-wider">PHYSICS FIGHTER</span>
+                </div>
                 
-                <!-- Guest View -->
-                <div id="nav-guest" class="flex items-center space-x-4">
-                    <button onclick="app.showLogin()" class="hover:text-accent transition">เข้าสู่ระบบ</button>
-                    <button onclick="app.showRegister()" class="bg-white text-primary px-4 py-2 rounded-full font-bold hover:bg-accent hover:text-white transition shadow-md">สมัครสมาชิก</button>
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#" onclick="app.renderHome()" class="text-white hover:text-accent transition font-medium">หน้าแรก</a>
+                    <a href="#" onclick="app.scrollToCourses()" class="text-white hover:text-accent transition font-medium">คอร์สเรียน</a>
+                    
+                    <!-- Guest View -->
+                    <div id="nav-guest" class="flex items-center space-x-4">
+                        <button onclick="app.showLogin()" class="text-white hover:text-accent transition">เข้าสู่ระบบ</button>
+                        <button onclick="app.showRegister()" class="bg-white text-primary px-4 py-2 rounded-full font-bold hover:bg-accent hover:text-white transition shadow-md">สมัครสมาชิก</button>
+                    </div>
+
+                    <!-- User View -->
+                    <div id="nav-user" class="hidden flex items-center space-x-4">
+                        <span id="user-display-name" class="font-medium">User</span>
+                        <button onclick="app.renderPayment()" class="text-sm bg-accent text-white px-3 py-1 rounded-full hover:bg-yellow-600 transition">
+                            <i class="fas fa-crown mr-1"></i> ต่ออายุ
+                        </button>
+                        <button onclick="app.logout()" class="text-gray-300 hover:text-white"><i class="fas fa-sign-out-alt"></i></button>
+                    </div>
+
+                    <!-- Admin View -->
+                    <div id="nav-admin" class="hidden flex items-center space-x-4">
+                        <span class="text-accent font-bold"><i class="fas fa-user-shield mr-1"></i> Admin</span>
+                        <button onclick="app.renderAdmin()" class="text-white hover:text-accent transition">จัดการระบบ</button>
+                        <button onclick="app.logout()" class="text-gray-300 hover:text-white"><i class="fas fa-sign-out-alt"></i></button>
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu Button (Hamburger) -->
+                <button class="md:hidden text-white text-2xl focus:outline-none" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Dropdown -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 border-t border-red-800">
+                <a href="#" onclick="app.renderHome(); toggleMobileMenu()" class="block py-3 text-white hover:text-accent border-b border-red-800/50">หน้าแรก</a>
+                <a href="#" onclick="app.scrollToCourses(); toggleMobileMenu()" class="block py-3 text-white hover:text-accent border-b border-red-800/50">คอร์สเรียน</a>
+                
+                <!-- Mobile Guest View -->
+                <div id="mobile-nav-guest" class="mt-3 space-y-3">
+                    <button onclick="app.showLogin(); toggleMobileMenu()" class="block w-full text-left text-white py-2">เข้าสู่ระบบ</button>
+                    <button onclick="app.showRegister(); toggleMobileMenu()" class="block w-full text-center bg-white text-primary px-4 py-2 rounded-lg font-bold">สมัครสมาชิก</button>
                 </div>
 
-                <!-- User View -->
-                <div id="nav-user" class="hidden flex items-center space-x-4">
-                    <span id="user-display-name" class="font-medium">User</span>
-                    <button onclick="app.renderPayment()" class="text-sm bg-accent text-white px-3 py-1 rounded-full hover:bg-yellow-600 transition">
-                        <i class="fas fa-crown mr-1"></i> ต่ออายุ
-                    </button>
-                    <button onclick="app.logout()" class="text-gray-300 hover:text-white"><i class="fas fa-sign-out-alt"></i></button>
+                <!-- Mobile User View -->
+                <div id="mobile-nav-user" class="hidden mt-3 space-y-3">
+                    <div class="flex items-center space-x-2 py-2 text-accent font-bold">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="mobile-user-name">User</span>
+                    </div>
+                    <button onclick="app.renderPayment(); toggleMobileMenu()" class="block w-full text-left text-white py-2 hover:text-accent"><i class="fas fa-crown mr-2"></i> ต่ออายุสมาชิก</button>
+                    <button onclick="app.logout(); toggleMobileMenu()" class="block w-full text-left text-gray-300 py-2 hover:text-white"><i class="fas fa-sign-out-alt mr-2"></i> ออกจากระบบ</button>
                 </div>
 
-                <!-- Admin View -->
-                <div id="nav-admin" class="hidden flex items-center space-x-4">
-                    <span class="text-accent font-bold"><i class="fas fa-user-shield mr-1"></i> Admin</span>
-                    <button onclick="app.renderAdmin()" class="hover:text-white">จัดการระบบ</button>
-                    <button onclick="app.logout()" class="text-gray-300 hover:text-white"><i class="fas fa-sign-out-alt"></i></button>
+                <!-- Mobile Admin View -->
+                <div id="mobile-nav-admin" class="hidden mt-3 space-y-3">
+                    <div class="flex items-center space-x-2 py-2 text-accent font-bold">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Admin System</span>
+                    </div>
+                    <button onclick="app.renderAdmin(); toggleMobileMenu()" class="block w-full text-left text-white py-2 hover:text-accent">จัดการระบบ</button>
+                    <button onclick="app.logout(); toggleMobileMenu()" class="block w-full text-left text-gray-300 py-2 hover:text-white">ออกจากระบบ</button>
                 </div>
             </div>
-            
-            <!-- Mobile Menu Button -->
-            <button class="md:hidden text-white text-2xl" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
         </div>
     </nav>
 
@@ -150,10 +188,10 @@
     </footer>
 
     <!-- User Modal (Hidden by default) -->
-    <div id="user-modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
+    <div id="user-modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 px-4">
         <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
         
-        <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+        <div class="modal-container bg-white w-full max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
             <div class="modal-content py-4 text-left px-6">
                 <!--Title-->
                 <div class="flex justify-between items-center pb-3">
@@ -305,21 +343,31 @@
             },
 
             updateNavbar: function() {
+                // Desktop Elements
                 const guestNav = document.getElementById('nav-guest');
                 const userNav = document.getElementById('nav-user');
                 const adminNav = document.getElementById('nav-admin');
                 
-                guestNav.classList.add('hidden');
-                userNav.classList.add('hidden');
-                adminNav.classList.add('hidden');
+                // Mobile Elements
+                const mobileGuestNav = document.getElementById('mobile-nav-guest');
+                const mobileUserNav = document.getElementById('mobile-nav-user');
+                const mobileAdminNav = document.getElementById('mobile-nav-admin');
+                
+                // Hide all first
+                [guestNav, userNav, adminNav].forEach(el => el.classList.add('hidden'));
+                [mobileGuestNav, mobileUserNav, mobileAdminNav].forEach(el => el.classList.add('hidden'));
 
                 if (!this.data.currentUser) {
                     guestNav.classList.remove('hidden');
+                    mobileGuestNav.classList.remove('hidden');
                 } else if (this.data.currentUser.role === 'admin') {
                     adminNav.classList.remove('hidden');
+                    mobileAdminNav.classList.remove('hidden');
                 } else {
                     userNav.classList.remove('hidden');
+                    mobileUserNav.classList.remove('hidden');
                     document.getElementById('user-display-name').textContent = this.data.currentUser.name;
+                    document.getElementById('mobile-user-name').textContent = this.data.currentUser.name;
                 }
             },
 
@@ -338,10 +386,10 @@
                     <!-- Hero Section -->
                     <div class="relative bg-primary overflow-hidden">
                         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1517673132405-a56a62b18caf?q=80&w=2000')] bg-cover bg-center opacity-20"></div>
-                        <div class="container mx-auto px-4 py-20 relative z-10 text-center text-white">
-                            <h1 class="text-4xl md:text-6xl font-bold mb-4 text-shadow">PHYSICS FIGHTER</h1>
-                            <p class="text-xl md:text-2xl mb-8 font-light text-gray-200">"Fight for Physics, Fight for Your Future"</p>
-                            <button onclick="app.scrollToCourses()" class="bg-accent text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-yellow-600 transition shadow-lg transform hover:scale-105">
+                        <div class="container mx-auto px-4 py-16 md:py-24 relative z-10 text-center text-white">
+                            <h1 class="text-3xl md:text-6xl font-bold mb-4 text-shadow leading-tight">PHYSICS FIGHTER</h1>
+                            <p class="text-lg md:text-2xl mb-8 font-light text-gray-200">"Fight for Physics, Fight for Your Future"</p>
+                            <button onclick="app.scrollToCourses()" class="bg-accent text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-yellow-600 transition shadow-lg transform hover:scale-105 active:scale-95">
                                 เริ่มต้นเรียนรู้เลย <i class="fas fa-arrow-right ml-2"></i>
                             </button>
                         </div>
@@ -350,12 +398,12 @@
                     <!-- Courses Section -->
                     <div id="courses-section" class="container mx-auto px-4 py-16">
                         <div class="text-center mb-12">
-                            <h2 class="text-3xl font-bold text-primary mb-2">คอร์สเรียนของเรา</h2>
+                            <h2 class="text-2xl md:text-3xl font-bold text-primary mb-2">คอร์สเรียนของเรา</h2>
                             <div class="h-1 w-20 bg-accent mx-auto"></div>
                         </div>
 
                         <!-- Categories -->
-                        <div class="grid md:grid-cols-3 gap-8">
+                        <div class="grid md:grid-cols-3 gap-6 md:gap-8">
                             ${this.generateCourseCards('review')}
                             ${this.generateCourseCards('alevel')}
                             ${this.generateCourseCards('tpat3')}
@@ -367,17 +415,17 @@
             generateCourseCards: function(category) {
                 const courses = this.data.courses.filter(c => c.category === category);
                 return courses.map(course => `
-                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 border border-gray-100 group">
-                        <div class="h-48 overflow-hidden relative">
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 border border-gray-100 group flex flex-col h-full">
+                        <div class="h-48 overflow-hidden relative shrink-0">
                             <img src="${course.image}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
                             <div class="absolute top-4 right-4 bg-accent text-white text-xs font-bold px-3 py-1 rounded-full shadow">
                                 ${category.toUpperCase()}
                             </div>
                         </div>
-                        <div class="p-6">
+                        <div class="p-6 flex flex-col flex-grow">
                             <h3 class="text-xl font-bold text-gray-800 mb-2">${course.title}</h3>
-                            <p class="text-gray-500 text-sm mb-4 line-clamp-2">${course.description}</p>
-                            <div class="flex justify-between items-center">
+                            <p class="text-gray-500 text-sm mb-4 line-clamp-2 flex-grow">${course.description}</p>
+                            <div class="flex justify-between items-center mt-auto">
                                 <span class="text-sm text-gray-400"><i class="fas fa-video mr-1"></i> ${course.videos.length} บทเรียน</span>
                                 <button onclick="app.renderCourseDetail(${course.id})" class="text-primary font-bold hover:text-red-700 transition">
                                     ดูรายละเอียด <i class="fas fa-chevron-right ml-1"></i>
@@ -408,27 +456,27 @@
                     return `
                     <div onclick="${isLocked ? 'app.showLockedMessage()' : `app.playVideo(${courseId}, ${video.id})`}" 
                          class="flex items-center p-4 border-b hover:bg-gray-50 cursor-pointer ${isLocked ? 'opacity-75 bg-gray-100' : ''}">
-                        <div class="mr-4 text-gray-400 font-bold w-6 text-center">${index + 1}</div>
-                        <div class="flex-grow">
-                            <h4 class="font-medium ${isLocked ? 'text-gray-500' : 'text-gray-800'}">
+                        <div class="mr-3 md:mr-4 text-gray-400 font-bold w-6 text-center text-sm md:text-base">${index + 1}</div>
+                        <div class="flex-grow min-w-0">
+                            <h4 class="font-medium text-sm md:text-base truncate ${isLocked ? 'text-gray-500' : 'text-gray-800'}">
                                 ${video.title} ${isWatched ? '<i class="fas fa-check-circle text-green-500 ml-2" title="ดูจบแล้ว"></i>' : ''}
                             </h4>
                         </div>
-                        <div class="ml-4">
+                        <div class="ml-2 md:ml-4 flex-shrink-0">
                             ${isLocked 
                                 ? '<span class="text-gray-400"><i class="fas fa-lock"></i></span>' 
-                                : '<span class="text-primary"><i class="fas fa-play-circle text-xl"></i></span>'}
+                                : '<span class="text-primary"><i class="fas fa-play-circle text-lg md:text-xl"></i></span>'}
                         </div>
                     </div>`;
                 }).join('');
 
                 container.innerHTML = `
                     <div class="container mx-auto px-4 py-8">
-                        <button onclick="app.renderHome()" class="mb-4 text-gray-500 hover:text-primary"><i class="fas fa-arrow-left"></i> กลับหน้าหลัก</button>
+                        <button onclick="app.renderHome()" class="mb-4 text-gray-500 hover:text-primary flex items-center"><i class="fas fa-arrow-left mr-2"></i> กลับหน้าหลัก</button>
                         
-                        <div class="grid md:grid-cols-3 gap-8">
+                        <div class="grid lg:grid-cols-3 gap-8">
                             <!-- Video Player Section -->
-                            <div class="md:col-span-2">
+                            <div class="lg:col-span-2">
                                 <div id="video-player-container" class="bg-black rounded-xl overflow-hidden shadow-2xl aspect-video relative flex items-center justify-center text-white">
                                     <div class="text-center p-8">
                                         <i class="fas fa-play-circle text-6xl mb-4 opacity-50"></i>
@@ -436,13 +484,15 @@
                                     </div>
                                 </div>
                                 <div class="mt-6 glass-panel p-6 rounded-xl">
-                                    <h1 class="text-2xl font-bold text-primary mb-2">${course.title}</h1>
-                                    <p class="text-gray-600 mb-4">${course.description}</p>
+                                    <h1 class="text-xl md:text-2xl font-bold text-primary mb-2">${course.title}</h1>
+                                    <p class="text-gray-600 mb-4 text-sm md:text-base">${course.description}</p>
                                     
                                     ${isActive 
                                         ? `<div class="bg-green-100 text-green-800 px-4 py-2 rounded-lg inline-block text-sm"><i class="fas fa-check-circle mr-1"></i> สถานะสมาชิก: Active</div>`
-                                        : `<div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg inline-block text-sm mb-2"><i class="fas fa-exclamation-circle mr-1"></i> ดูได้เฉพาะคลิปฟรี</div>
-                                           <button onclick="app.renderPayment()" class="ml-2 text-sm bg-primary text-white px-3 py-2 rounded hover:bg-red-800">สมัครสมาชิกเพื่อดูทั้งหมด</button>`
+                                        : `<div class="flex flex-col md:flex-row md:items-center">
+                                            <div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg inline-block text-sm mb-2 md:mb-0"><i class="fas fa-exclamation-circle mr-1"></i> ดูได้เฉพาะคลิปฟรี</div>
+                                            <button onclick="app.renderPayment()" class="md:ml-2 text-sm bg-primary text-white px-3 py-2 rounded hover:bg-red-800 shadow-sm w-full md:w-auto">สมัครสมาชิกเพื่อดูทั้งหมด</button>
+                                           </div>`
                                     }
                                 </div>
                             </div>
@@ -528,7 +578,7 @@
                 container.innerHTML = `
                     <div class="container mx-auto px-4 py-12">
                         <div class="text-center max-w-3xl mx-auto mb-12">
-                            <h2 class="text-3xl font-bold text-primary mb-4">สมัครสมาชิก Physics Fighter</h2>
+                            <h2 class="text-2xl md:text-3xl font-bold text-primary mb-4">สมัครสมาชิก Physics Fighter</h2>
                             <p class="text-gray-600">เข้าถึงคอร์สเรียนทั้งหมดกว่า 500+ ชั่วโมง ครอบคลุมเนื้อหา ม.ปลาย - สอบเข้ามหาวิทยาลัย</p>
                         </div>
 
@@ -620,13 +670,14 @@
 
                 const container = document.getElementById('app-container');
                 container.innerHTML = `
-                    <div class="flex h-screen bg-gray-100">
+                    <div class="flex flex-col md:flex-row h-screen bg-gray-100">
                         <!-- Sidebar -->
-                        <div class="w-64 bg-white shadow-lg hidden md:block">
-                            <div class="p-6 border-b">
+                        <div class="w-full md:w-64 bg-white shadow-lg">
+                            <div class="p-6 border-b flex justify-between items-center">
                                 <h2 class="text-xl font-bold text-primary">Admin Control</h2>
+                                <button class="md:hidden text-gray-500" onclick="document.getElementById('admin-nav-items').classList.toggle('hidden')"><i class="fas fa-chevron-down"></i></button>
                             </div>
-                            <nav class="p-4 space-y-2">
+                            <nav class="p-4 space-y-2 hidden md:block" id="admin-nav-items">
                                 <a href="#" onclick="app.renderAdminTab('payments')" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-50 text-gray-700 font-medium bg-red-50 text-primary" id="admin-menu-payments">
                                     <i class="fas fa-money-bill-wave w-6"></i> รายการแจ้งโอน
                                 </a>
@@ -640,7 +691,7 @@
                         </div>
                         
                         <!-- Content -->
-                        <div class="flex-1 overflow-y-auto p-8" id="admin-content">
+                        <div class="flex-1 overflow-y-auto p-4 md:p-8" id="admin-content">
                             <!-- Default to Payments -->
                         </div>
                     </div>
@@ -655,8 +706,11 @@
                     el.classList.remove('bg-red-50', 'text-primary');
                     el.classList.add('text-gray-700');
                 });
-                document.getElementById(`admin-menu-${tabName}`).classList.add('bg-red-50', 'text-primary');
-                document.getElementById(`admin-menu-${tabName}`).classList.remove('text-gray-700');
+                const activeMenu = document.getElementById(`admin-menu-${tabName}`);
+                if(activeMenu) {
+                    activeMenu.classList.add('bg-red-50', 'text-primary');
+                    activeMenu.classList.remove('text-gray-700');
+                }
                 
                 if (tabName === 'payments') {
                     const pendingPayments = this.data.payments.filter(p => p.status === 'pending');
@@ -671,7 +725,7 @@
                                 <h3 class="font-bold text-yellow-800">รอการอนุมัติ (${pendingPayments.length})</h3>
                             </div>
                             <div class="overflow-x-auto">
-                                <table class="w-full text-left text-sm text-gray-600">
+                                <table class="w-full text-left text-sm text-gray-600 whitespace-nowrap md:whitespace-normal">
                                     <thead class="bg-gray-50 text-gray-800 font-bold">
                                         <tr>
                                             <th class="px-6 py-3">User</th>
@@ -692,8 +746,10 @@
                                                 <td class="px-6 py-4">${this.formatDate(p.date)}</td>
                                                 <td class="px-6 py-4"><button onclick="window.open('https://via.placeholder.com/300x500?text=Slip+Image', '_blank')" class="text-blue-500 underline">ดูสลิป</button></td>
                                                 <td class="px-6 py-4">
-                                                    <button onclick="app.approvePayment(${p.id}, true)" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mr-2 shadow-sm">อนุมัติ</button>
-                                                    <button onclick="app.approvePayment(${p.id}, false)" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 shadow-sm">ปฏิเสธ</button>
+                                                    <div class="flex space-x-2">
+                                                        <button onclick="app.approvePayment(${p.id}, true)" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 shadow-sm text-xs md:text-sm">อนุมัติ</button>
+                                                        <button onclick="app.approvePayment(${p.id}, false)" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 shadow-sm text-xs md:text-sm">ปฏิเสธ</button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         `).join('')}
@@ -707,64 +763,70 @@
                              <div class="px-6 py-4 border-b border-gray-100">
                                 <h3 class="font-bold text-gray-800">ประวัติการตรวจสอบ</h3>
                             </div>
-                             <table class="w-full text-left text-sm text-gray-600">
-                                <tbody class="divide-y">
-                                    ${historyPayments.map(p => `
-                                        <tr>
-                                            <td class="px-6 py-3">${p.userName}</td>
-                                            <td class="px-6 py-3">${p.packageName}</td>
-                                            <td class="px-6 py-3">฿${p.amount.toLocaleString()}</td>
-                                            <td class="px-6 py-3"><span class="${p.status === 'approved' ? 'text-green-600' : 'text-red-600'} font-bold uppercase">${p.status}</span></td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                             </table>
+                            <div class="overflow-x-auto">
+                                 <table class="w-full text-left text-sm text-gray-600 whitespace-nowrap md:whitespace-normal">
+                                    <tbody class="divide-y">
+                                        ${historyPayments.map(p => `
+                                            <tr>
+                                                <td class="px-6 py-3">${p.userName}</td>
+                                                <td class="px-6 py-3">${p.packageName}</td>
+                                                <td class="px-6 py-3">฿${p.amount.toLocaleString()}</td>
+                                                <td class="px-6 py-3"><span class="${p.status === 'approved' ? 'text-green-600' : 'text-red-600'} font-bold uppercase">${p.status}</span></td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                 </table>
+                            </div>
                         </div>
                     `;
                 } else if (tabName === 'users') {
                     content.innerHTML = `
-                         <div class="flex justify-between items-center mb-6">
+                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                             <h2 class="text-2xl font-bold text-gray-800">จัดการสมาชิก</h2>
-                            <button onclick="app.openUserModal()" class="bg-primary text-white px-4 py-2 rounded-lg font-bold hover:bg-red-800 shadow transition">
+                            <button onclick="app.openUserModal()" class="bg-primary text-white px-4 py-2 rounded-lg font-bold hover:bg-red-800 shadow transition w-full md:w-auto">
                                 <i class="fas fa-plus mr-2"></i> เพิ่มสมาชิก
                             </button>
                          </div>
 
                          <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                            <table class="w-full text-left text-sm text-gray-600">
-                                <thead class="bg-gray-50 text-gray-800 font-bold">
-                                    <tr>
-                                        <th class="px-6 py-3">ชื่อ-นามสกุล</th>
-                                        <th class="px-6 py-3">Username</th>
-                                        <th class="px-6 py-3">สถานะ</th>
-                                        <th class="px-6 py-3">หมดอายุ</th>
-                                        <th class="px-6 py-3">จัดการ</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y">
-                                    ${this.data.users.map(u => {
-                                        const isActive = u.role === 'admin' ? true : (u.subscriptionExpiry && new Date(u.subscriptionExpiry) > new Date());
-                                        const expiryText = u.role === 'admin' ? 'ถาวร' : (u.subscriptionExpiry ? this.formatDate(u.subscriptionExpiry) : 'ไม่มีแพ็กเกจ');
-                                        const statusBadge = u.role === 'admin' 
-                                            ? '<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-bold">ADMIN</span>' 
-                                            : (isActive 
-                                                ? '<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">ACTIVE</span>' 
-                                                : '<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">EXPIRED</span>');
-                                        
-                                        return `
-                                        <tr class="hover:bg-gray-50">
-                                            <td class="px-6 py-4 font-medium text-gray-800">${u.name}</td>
-                                            <td class="px-6 py-4">${u.username}</td>
-                                            <td class="px-6 py-4">${statusBadge}</td>
-                                            <td class="px-6 py-4">${expiryText}</td>
-                                            <td class="px-6 py-4">
-                                                <button onclick="app.openUserModal('${u.username}')" class="text-blue-600 hover:text-blue-800 mr-3 font-medium"><i class="fas fa-edit"></i> แก้ไข</button>
-                                                ${u.role !== 'admin' ? `<button onclick="app.deleteUser('${u.username}')" class="text-red-500 hover:text-red-700 font-medium"><i class="fas fa-trash"></i> ลบ</button>` : ''}
-                                            </td>
-                                        </tr>`;
-                                    }).join('')}
-                                </tbody>
-                            </table>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600 whitespace-nowrap md:whitespace-normal">
+                                    <thead class="bg-gray-50 text-gray-800 font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">ชื่อ-นามสกุล</th>
+                                            <th class="px-6 py-3">Username</th>
+                                            <th class="px-6 py-3">สถานะ</th>
+                                            <th class="px-6 py-3">หมดอายุ</th>
+                                            <th class="px-6 py-3">จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y">
+                                        ${this.data.users.map(u => {
+                                            const isActive = u.role === 'admin' ? true : (u.subscriptionExpiry && new Date(u.subscriptionExpiry) > new Date());
+                                            const expiryText = u.role === 'admin' ? 'ถาวร' : (u.subscriptionExpiry ? this.formatDate(u.subscriptionExpiry) : 'ไม่มีแพ็กเกจ');
+                                            const statusBadge = u.role === 'admin' 
+                                                ? '<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-bold">ADMIN</span>' 
+                                                : (isActive 
+                                                    ? '<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">ACTIVE</span>' 
+                                                    : '<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">EXPIRED</span>');
+                                            
+                                            return `
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-6 py-4 font-medium text-gray-800">${u.name}</td>
+                                                <td class="px-6 py-4">${u.username}</td>
+                                                <td class="px-6 py-4">${statusBadge}</td>
+                                                <td class="px-6 py-4">${expiryText}</td>
+                                                <td class="px-6 py-4">
+                                                    <div class="flex space-x-2">
+                                                        <button onclick="app.openUserModal('${u.username}')" class="text-blue-600 hover:text-blue-800 font-medium"><i class="fas fa-edit"></i></button>
+                                                        ${u.role !== 'admin' ? `<button onclick="app.deleteUser('${u.username}')" class="text-red-500 hover:text-red-700 font-medium"><i class="fas fa-trash"></i></button>` : ''}
+                                                    </div>
+                                                </td>
+                                            </tr>`;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
                          </div>
                     `;
                 } else if (tabName === 'videos') {
@@ -791,7 +853,7 @@
                                     <input type="checkbox" id="admin-video-free" class="mr-2 h-5 w-5">
                                     <label for="admin-video-free">ดูฟรี (คลิปตัวอย่าง)</label>
                                 </div>
-                                <button type="submit" class="bg-primary text-white py-2 px-4 rounded font-bold hover:bg-red-800 h-10 mt-6">บันทึกวีดีโอ</button>
+                                <button type="submit" class="bg-primary text-white py-2 px-4 rounded font-bold hover:bg-red-800 h-10 mt-6 w-full md:w-auto">บันทึกวีดีโอ</button>
                             </form>
                          </div>
 
@@ -809,12 +871,12 @@
                                             ${c.videos.length === 0 ? '<div class="p-4 text-gray-400 text-sm">ยังไม่มีวีดีโอ</div>' : 
                                             c.videos.map((v, idx) => `
                                                 <div class="p-3 flex justify-between items-center hover:bg-gray-50">
-                                                    <div class="flex items-center">
-                                                        <span class="w-8 text-gray-400 text-sm">${idx+1}</span>
-                                                        <span class="${v.isFree ? 'text-green-600 font-medium' : 'text-gray-700'}">${v.title}</span>
-                                                        ${v.isFree ? '<span class="ml-2 text-xs bg-green-100 text-green-800 px-1 rounded">FREE</span>' : ''}
+                                                    <div class="flex items-center overflow-hidden">
+                                                        <span class="w-8 text-gray-400 text-sm flex-shrink-0">${idx+1}</span>
+                                                        <span class="${v.isFree ? 'text-green-600 font-medium' : 'text-gray-700'} truncate mr-2">${v.title}</span>
+                                                        ${v.isFree ? '<span class="ml-2 text-xs bg-green-100 text-green-800 px-1 rounded flex-shrink-0">FREE</span>' : ''}
                                                     </div>
-                                                    <button onclick="app.deleteVideo(${c.id}, ${v.id})" class="text-red-500 hover:text-red-700 text-sm">ลบ</button>
+                                                    <button onclick="app.deleteVideo(${c.id}, ${v.id})" class="text-red-500 hover:text-red-700 text-sm flex-shrink-0">ลบ</button>
                                                 </div>
                                             `).join('')}
                                         </div>
@@ -993,8 +1055,8 @@
             showLogin: function() {
                 const container = document.getElementById('app-container');
                 container.innerHTML = `
-                    <div class="min-h-[80vh] flex items-center justify-center bg-secondary">
-                        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+                    <div class="min-h-[80vh] flex items-center justify-center bg-secondary px-4">
+                        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
                             <div class="text-center mb-8">
                                 <h2 class="text-3xl font-bold text-primary">เข้าสู่ระบบ</h2>
                                 <p class="text-gray-500 mt-2">ยินดีต้อนรับสู่ Physics Fighter</p>
@@ -1025,8 +1087,8 @@
             showRegister: function() {
                 const container = document.getElementById('app-container');
                 container.innerHTML = `
-                    <div class="min-h-[80vh] flex items-center justify-center bg-secondary">
-                        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+                    <div class="min-h-[80vh] flex items-center justify-center bg-secondary px-4">
+                        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
                             <div class="text-center mb-8">
                                 <h2 class="text-3xl font-bold text-primary">สมัครสมาชิก</h2>
                                 <p class="text-gray-500 mt-2">เริ่มต้นเรียนฟิสิกส์ให้เข้าใจวันนี้</p>
@@ -1067,8 +1129,8 @@
 
         // Initialize App
         function toggleMobileMenu() {
-            // Simple mobile menu toggle logic could be added here
-            alert("Mobile Menu clicked (Implemented purely for responsive layout check)");
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
         }
 
         window.onload = function() {
